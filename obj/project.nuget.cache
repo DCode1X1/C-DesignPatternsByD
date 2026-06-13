@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "8MpmpiEtUiU=",
+  "success": true,
+  "projectFilePath": "C:\\GithubDCode1X1\\CSharpDesignPatternsByD\\C-DesignPatternsByD\\C-DesignPatternsByD.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ddrah\\.nuget\\packages\\microsoft.aspnetcore.app.internal.assets\\10.0.0\\microsoft.aspnetcore.app.internal.assets.10.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

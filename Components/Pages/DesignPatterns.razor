@@ -1,0 +1,19 @@
+@page "/designpatterns"
+@rendermode InteractiveServer
+
+<PageTitle>Design Patterns</PageTitle>
+
+<h1>Design Patterns</h1>
+
+<p role="status">Builder Patterns @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Open</button>
+
+@code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+}
