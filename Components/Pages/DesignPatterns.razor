@@ -1,19 +1,74 @@
 @page "/designpatterns"
 @rendermode InteractiveServer
 
-<PageTitle>Design Patterns</PageTitle>
+<div class="container my-5">
+    <!-- Header Section -->
+    <div class="text-center mb-5">
+        <h1 class="fw-bold text-dark">Our Featured Services</h1>
+        <p class="text-muted fs-5">Explore our range of solutions tailored just for you.</p>
+    </div>
 
-<h1>Design Patterns</h1>
+    <!-- Responsive Card Grid -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var item in CardList)
+        {
+            <div class="col">
+                <div class="card h-100 border-0 shadow-sm hover-shadow transition-all">
+                    <!-- Optional Card Image -->
+                    <img src="@item.ImageUrl" class="card-img-top object-fit-cover" alt="@item.Title" style="height: 200px;">
+                    
+                    <!-- Card Body -->
+                    <div class="card-body d-flex flex-column p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2 fs-7 me-2">
+                                @item.Category
+                            </span>
+                            <small class="text-muted ms-auto">@item.DateCreated.ToString("MMM dd, yyyy")</small>
+                        </div>
+                        
+                        <h5 class="card-title fw-semibold text-dark mb-2">@item.Title</h5>
+                        <p class="card-text text-secondary mb-4 flex-grow-1">@item.Description</p>
+                        
+                        <!-- Card Footer Action -->
+                        <div class="mt-auto pt-3 border-top border-light">
+                            <a href="/details/@item.Id" class="btn btn-outline-primary w-100 fw-medium rounded-2">
+                                Learn More
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
 
-<p role="status">Builder Patterns @currentCount</p>
-
-<button class="btn btn-primary" @onclick="IncrementCount">Open</button>
+<!-- Custom CSS for subtle animations (Add to your site.css or a <style> tag) -->
+<style>
+    .transition-all {
+        transition: all 0.3s ease-in-out;
+    }
+    .hover-shadow:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1) !important;
+    }
+</style>
 
 @code {
-    private int currentCount = 0;
-
-    private void IncrementCount()
+    // Sample Data Model inside the Razor component
+    private List<CardItem> CardList = new()
     {
-        currentCount++;
+        new CardItem { Id = 1, Title = "Creational Patterns", Description = "Master the art of object creation. These patterns provide flexible mechanisms to instantiate classes while maximizing code reuse and safety.", Category = "Architecture", ImageUrl = "/images/image1.jpg",  DateCreated = DateTime.Now },
+        new CardItem { Id = 2, Title = "Structural Patterns", Description = "Assemble classes and objects effortlessly. Learn how to build larger, highly efficient systems without sacrificing flexibility.", Category = "Structure", ImageUrl = "https://picsum.photos", DateCreated = DateTime.Now.AddDays(-2) },
+        new CardItem { Id = 3, Title = "Behavioral Patterns", Description = "Streamline object interaction. These patterns optimize communication protocols and responsibility distribution across your software.", Category = "Communication", ImageUrl = "https://picsum.photos", DateCreated = DateTime.Now.AddDays(-5) }
+    };
+
+    public class CardItem
+    {
+        public int Id { get; init; }
+        public string Title { get; init; } = string.Empty;
+        public string Description { get; init; } = string.Empty;
+        public string Category { get; init; } = string.Empty;
+        public string ImageUrl { get; init; } = string.Empty;
+        public DateTime DateCreated { get; init; }
     }
 }
