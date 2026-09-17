@@ -2,51 +2,98 @@
 @rendermode InteractiveServer
 
 <div class="container my-5">
-    <!-- Header Section -->
     <div class="text-center mb-5">
-        <h1 class="fw-bold text-dark">Our Featured Services</h1>
-        <p class="text-muted fs-5">Explore our range of solutions tailored just for you.</p>
+        <h1 class="fw-bold text-dark">C# Design Patterns</h1>
+        <p class="text-muted fs-5">Explore design patterns in software engineering.</p>
     </div>
 
-    <!-- Responsive Card Grid -->
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         @foreach (var item in CardList)
         {
             <div class="col">
-                <div class="card h-100 border-0 shadow-sm hover-shadow transition-all">
-                    <!-- Optional Card Image -->
+                <div class="card h-100 border-0 shadow-sm hover-shadow transition-all @(selectedParentId == item.Id ? "border border-primary" : "")">
                     <img src="@item.ImageUrl" class="card-img-top object-fit-cover" alt="@item.Title" style="height: 200px;">
-                    
-                    <!-- Card Body -->
+
                     <div class="card-body d-flex flex-column p-4">
                         <div class="d-flex align-items-center mb-3">
-                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2 fs-7 me-2">
-                                @item.Category
-                            </span>
-                            <small class="text-muted ms-auto">@item.DateCreated.ToString("MMM dd, yyyy")</small>
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2 fs-7 me-2">
+                                    @item.Category
+                                </span>
+                                <small class="text-muted ms-auto">@item.DateCreated.ToString("MMM dd, yyyy")</small>
                         </div>
-                        
+
                         <h5 class="card-title fw-semibold text-dark mb-2">@item.Title</h5>
                         <p class="card-text text-secondary mb-4 flex-grow-1">@item.Description</p>
-                        
-                        <!-- Card Footer Action -->
+
                         <div class="mt-auto pt-3 border-top border-light">
-                            <a href="/details/@item.Id" class="btn btn-outline-primary w-100 fw-medium rounded-2">
-                                Learn More
-                            </a>
+                                <button @onclick="() => SelectParentPattern(item.Id)" class="btn @(selectedParentId == item.Id ? "btn-primary" : "btn-outline-primary") w-100 fw-medium rounded-2">
+                                    @(selectedParentId == item.Id ? "Showing Details" : "Learn More")
+                                </button>
                         </div>
                     </div>
                 </div>
             </div>
         }
     </div>
+
+    @if (selectedParentId.HasValue)
+    {
+        var activeSubPatterns = SubPatternList.Where(x => x.ParentId == selectedParentId.Value).ToList();
+
+        <div class="mt-5 pt-4 border-top">
+            <h3 class="fw-bold text-dark mb-4 text-center">Specific Patterns for Chosen Category</h3>
+
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+                @foreach (var sub in activeSubPatterns)
+                {
+                    <div class="col">
+                        <div class="card h-100 border-0 shadow-sm border-start border-4 border-primary">
+                            <div class="card-body p-3">
+                                    <h6 class="fw-bold text-dark mb-1">@sub.Name</h6>
+                                    <p class="text-muted small mb-3" style="font-size: 0.85rem;">@sub.ShortDescription</p>
+                                    <button @onclick="() => SelectPattern(sub.Id)" class="btn @(selectedParentId == @sub.Id ? "btn-primary" : "btn-outline-primary") w-100 fw-medium rounded-2">
+                                        @(selectedParentId == @sub.Id ? "Showing Details" : "Learn More")
+                                    </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    @if (selectedPatternId.HasValue)
+    {
+        var activeSubPatterns = SubPatternList.Where(x => x.Id == selectedPatternId.Value).ToList();
+
+        <div class="mt-5 pt-4 border-top">
+            <h3 class="fw-bold text-dark mb-4 text-center">Design Pattern @activeSubPatterns.FirstOrDefault()?.Name</h3>
+
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+                @foreach (var sub in activeSubPatterns)
+                {
+                    <div class="col">
+                        <div class="card h-100 border-0 shadow-sm border-start border-4 border-primary">
+                            <div class="card-body p-3">
+                                <h6 class="fw-bold text-dark mb-1">@sub.Name</h6>
+                                <p class="text-muted small mb-3" style="font-size: 0.85rem;">@sub.ShortDescription</p>
+                                <a href="/details/@sub.Id" class="btn btn-sm btn-link p-0 text-decoration-none fw-semibold">
+                                    Display pattern &rarr;
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
 </div>
 
-<!-- Custom CSS for subtle animations (Add to your site.css or a <style> tag) -->
 <style>
     .transition-all {
         transition: all 0.3s ease-in-out;
     }
+
     .hover-shadow:hover {
         transform: translateY(-5px);
         box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1) !important;
@@ -54,13 +101,57 @@
 </style>
 
 @code {
-    // Sample Data Model inside the Razor component
+    private int? selectedParentId;
+    private int? selectedPatternId;
+
+    private void SelectParentPattern(int id)
+    {
+        if (selectedParentId == id)
+        {
+            selectedParentId = null;
+        }
+        else
+        {
+            selectedParentId = id;
+        }
+    }
+
+    private void SelectPattern(int id)
+    {
+        if (selectedPatternId == id)
+        {
+            selectedPatternId = null;
+        }
+        else
+        {
+            selectedPatternId = id;
+        }
+    }
+
+
+
     private List<CardItem> CardList = new()
     {
         new CardItem { Id = 1, Title = "Creational Patterns", Description = "Master the art of object creation. These patterns provide flexible mechanisms to instantiate classes while maximizing code reuse and safety.", Category = "Architecture", ImageUrl = "/images/image1.jpg",  DateCreated = DateTime.Now },
         new CardItem { Id = 2, Title = "Structural Patterns", Description = "Assemble classes and objects effortlessly. Learn how to build larger, highly efficient systems without sacrificing flexibility.", Category = "Structure", ImageUrl = "https://picsum.photos", DateCreated = DateTime.Now.AddDays(-2) },
         new CardItem { Id = 3, Title = "Behavioral Patterns", Description = "Streamline object interaction. These patterns optimize communication protocols and responsibility distribution across your software.", Category = "Communication", ImageUrl = "https://picsum.photos", DateCreated = DateTime.Now.AddDays(-5) }
     };
+
+    private List<SubItem> SubPatternList = new()
+    {
+        new SubItem { Id = 101, ParentId = 1, Name = "Singleton", ShortDescription = "Ensures a class has only one instance and provides a global point of access to it." },
+        new SubItem { Id = 102, ParentId = 1, Name = "Factory Method", ShortDescription = "Provides an interface for creating objects in a superclass, but allows subclasses to alter the type." },
+        new SubItem { Id = 103, ParentId = 1, Name = "Abstract Factory", ShortDescription = "Lets you produce families of related objects without specifying their concrete classes." },
+
+        new SubItem { Id = 201, ParentId = 2, Name = "Adapter", ShortDescription = "Allows objects with incompatible interfaces to collaborate with each other." },
+        new SubItem { Id = 202, ParentId = 2, Name = "Decorator", ShortDescription = "Lets you attach new behaviors to objects by placing these objects inside special wrapper objects." },
+        new SubItem { Id = 203, ParentId = 2, Name = "Facade", ShortDescription = "Provides a simplified interface to a library, a framework, or any other complex set of classes." },
+
+        new SubItem { Id = 301, ParentId = 3, Name = "Observer", ShortDescription = "Lets you define a subscription mechanism to notify multiple objects about any events." },
+        new SubItem { Id = 302, ParentId = 3, Name = "Strategy", ShortDescription = "Lets you define a family of algorithms, put each of them into a separate class." },
+        new SubItem { Id = 303, ParentId = 3, Name = "Command", ShortDescription = "Turns a request into a stand-alone object that contains all information about the request." }
+    };
+
 
     public class CardItem
     {
@@ -70,5 +161,21 @@
         public string Category { get; init; } = string.Empty;
         public string ImageUrl { get; init; } = string.Empty;
         public DateTime DateCreated { get; init; }
+    }
+
+    public class SubItem
+    {
+        public int Id { get; init; }
+        public int ParentId { get; init; }
+        public string Name { get; init; } = string.Empty;
+        public string ShortDescription { get; init; } = string.Empty;
+    }
+
+    public class SelectedPattern
+    {
+        public int Id { get; init; }
+        public int ParentId { get; init; }
+        public string Name { get; init; } = string.Empty;
+        public string ShortDescription { get; init; } = string.Empty;
     }
 }
